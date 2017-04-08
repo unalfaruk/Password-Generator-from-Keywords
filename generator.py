@@ -46,7 +46,7 @@ def generate_word(words, min, max):
                     #Add every produced words to list for how many words contains?
                     if not ''.join(j) in words_lists[counter_for_join_word-1]:
                         words_lists[counter_for_join_word-1].append(''.join(j))
-                        yield ''.join(j)
+                        #yield ''.join(j)
                         add_numbers(''.join(j),counter_for_join_word-1)
 
                     #add pointings to one word
@@ -55,12 +55,12 @@ def generate_word(words, min, max):
                             #add to end
                             if not j[0]+mark in words_lists[0]:
                                 words_lists[0].append(j[0]+mark)
-                                yield j[0]+mark
+                                #yield j[0]+mark
                                 add_numbers(j[0]+mark,0)
                             #add to head
                             if not mark+j[0] in words_lists[0]:
                                 words_lists[0].append(mark+j[0])
-                                yield mark+j[0]
+                                #yield mark+j[0]
                                 add_numbers(mark+j[0],0)
 
 
@@ -68,23 +68,22 @@ def generate_word(words, min, max):
                         for mark in pointings:
                             if not mark.join(j) in words_lists[counter_for_join_word-1]:
                                 words_lists[counter_for_join_word-1].append(mark.join(j))
-                                yield mark.join(j)
+                                #yield mark.join(j)
                                 add_numbers(mark.join(j),counter_for_join_word-1)
 
 def add_numbers(word_for_add, howmanywords):
-    print(word_for_add,howmanywords)
+    #print(word_for_add,howmanywords)
     for number in numbers:
         #add to end
         if not number+word_for_add in words_lists[howmanywords]:
             words_lists[howmanywords].append(number+word_for_add)
-            print(number+word_for_add)
+            #print(number+word_for_add)
         #add to head
         if not word_for_add+number in words_lists[howmanywords]:
             words_lists[howmanywords].append(word_for_add+number)
-            print(word_for_add+number)
+            #print(word_for_add+number)
 
-for word in generate_word(words, 1, length_words):
-    print(word)
+generate_word(words, 1, length_words)
 
 print("\n",counter_word," words generated.\n")
 print(words_lists)
