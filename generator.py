@@ -22,18 +22,22 @@ length_pointings=len(pointings)
 
 #Words lists for informatin about how many words contain
 words_lists=[]
+words_lists_with_number=[]
+complex_words=[]
+complex_words_removed=[]
 #Contain a just word, contain two words, contain three...
 for counter in range(0,length_words):
     words_lists.append([])
 
+for counter in range(0,length_words):
+    words_lists_with_number.append([])
+
 #Informations
 print("Words:{}\nPunctuation:{}\nNumbers:{}".format(length_words,length_pointings,length_numbers))
 
-#Counter for creating words
-counter_word=0
 
 def generate_word(words, min, max):
-    global counter_word
+
     for i in range(int(min), int(max)+1):
         for j in itertools.product(words, repeat=i):
             #create a list and add items to this list
@@ -41,6 +45,7 @@ def generate_word(words, min, max):
             counter_for_join_word=len(j)
             #print(counter_for_join_word)
             counter_list = Counter(j)
+            print(counter_list)
             for element in j:
                 if (counter_list[element]<3):
                     #Add every produced words to list for how many words contains?
@@ -76,14 +81,37 @@ def add_numbers(word_for_add, howmanywords):
     for number in numbers:
         #add to end
         if not number+word_for_add in words_lists[howmanywords]:
-            words_lists[howmanywords].append(number+word_for_add)
+            words_lists_with_number[howmanywords].append(number+word_for_add)
             #print(number+word_for_add)
         #add to head
         if not word_for_add+number in words_lists[howmanywords]:
-            words_lists[howmanywords].append(word_for_add+number)
+            words_lists_with_number[howmanywords].append(word_for_add+number)
             #print(word_for_add+number)
+
+#this function generate keywords more complex but not best.
+def generate_complex():
+    for words_list in words_lists:
+        for word in words_list:
+            for words_list_with_number in words_lists_with_number:
+                for word_with_number in words_list_with_number:
+                    complex_words.append(word+word_with_number)
+
+    for complex_word in complex_words:
+        for word_to_count in words:
+            if(complex_word.count(word_to_count)>1):
+                try:
+                    #print(word_to_count, complex_word, complex_word.count(word_to_count))
+                    complex_words_removed.append(complex_word)
+                except:
+                    pass
+
+    complex_words_finally=list(set(complex_words).difference(complex_words_removed))
+    print(complex_words_finally)
 
 generate_word(words, 1, length_words)
 
-print("\n",counter_word," words generated.\n")
+#print("\n",counter_words," words generated.\n")
 print(words_lists)
+print(words_lists_with_number)
+
+generate_complex()
