@@ -5,8 +5,8 @@ from datetime import datetime
 import os.path
 
 print("\tWELCOME to Password Generator from Keywords for Brute Force\n\n\tThis program is going to ask you the following questions,")
-print("\n\t- Keywords about victim (Split with ',')\n\t- Words contains numbers('95','2017','123')? [y/N]\n\t\t- Numbers about victim (Split with ',')")
-print("\n\t- Words contains punctuation('.',',','_')? [y/N]\n\t\t- Words contains these punctuations (Split with blank. Ex: '. , _')\n\n")
+print("\n\t- Keywords about victim (Split with ',')\n\t- Words to be produced contains numbers ('95','2017','123')? [y/N]\n\t\t- Numbers about victim (Split with ',')")
+print("\n\t- Words to be produced contains punctuation ('.',',','_')? [y/N]\n\t\t- Words contains these punctuations (Split with blank. Ex: '. _ -')\n\n")
 
 keywords=input("Keywords about victim (Split with ','): ")
 words=keywords.split(",")
@@ -30,8 +30,6 @@ if(rule_punctuation == "Y" or rule_punctuation =="y"):
     pointings=rule_pointings.split(" ")
     length_pointings=len(pointings)
 
-
-
 #Words lists for informatin about how many words contain
 words_lists=[]
 words_lists_with_number=[]
@@ -51,7 +49,6 @@ for counter in range(0,length_words):
 
 #Informations
 print("\n\tWords:{}\n\tPunctuation:{}\n\tNumbers:{}\n".format(length_words,length_pointings or None,length_numbers or None))
-
 
 def generate_word(words, min, max):
 
