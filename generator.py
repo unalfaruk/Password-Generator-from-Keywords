@@ -4,9 +4,10 @@ from collections import Counter
 from datetime import datetime
 import os.path
 
-print("\tWELCOME to Password Generator from Keywords for Brute Force\n\n\tThis program is going to ask you the following questions,")
-print("\n\t- Keywords about victim (Split with ',')\n\t- Words to be produced contains numbers ('95','2017','123')? [y/N]\n\t\t- Numbers about victim (Split with ',')")
-print("\n\t- Words to be produced contains punctuation ('.',',','_')? [y/N]\n\t\t- Words contains these punctuations (Split with blank. Ex: '. _ -')\n\n")
+print("\tWELCOME to Password Generator from Keywords for Brute Force\n\n\tThis program is going to ask you the following informations,")
+print("\n\t- Keywords about victim (Split with ',')\n\t- Words to be produced contain numbers ('95','2017','123')? [y/N]\n\t\t- Numbers about victim (Split with ',')")
+print("\n\t- Words to be produced contain punctuation ('.',',','_')? [y/N]\n\t\t- Words contain these punctuations (Split with blank. Ex: '. _ -')")
+print("\n\t- Words to be produced have character limit? [y/N]\n\t\t- How many letters do words contain maximum? (Ex: 12):\n\n")
 
 keywords=input("Keywords about victim (Split with ','): ")
 words=keywords.split(",")
@@ -16,19 +17,32 @@ if(length_words<=0 or len(keywords.strip())<=0):
     print("\n\tSorry, you have to enter at least one word. GOODBYE!\n")
     exit()
 
-contain_number=input("Words contains numbers('95','2017','123')? [y/N]: ")
+contain_number=input("Words contain numbers('95','2017','123')? [y/N]: ")
 length_numbers=0
 if(contain_number == "Y" or contain_number =="y"):
     numbers_entered=input("Numbers about victim (Split with ','): ")
     numbers=numbers_entered.split(",")
     length_numbers=len(numbers)
 
-rule_punctuation=input("Words contains punctuation('.',',','_')? [y/N]: ")
+rule_punctuation=input("Words contain punctuation('.',',','_')? [y/N]: ")
 length_pointings=0
 if(rule_punctuation == "Y" or rule_punctuation =="y"):
-    rule_pointings=input("Words contains these punctuations (Split with blank. Ex: '. , _'): ")
+    rule_pointings=input("Words contain these punctuations (Split with blank. Ex: '. , _'): ")
     pointings=rule_pointings.split(" ")
     length_pointings=len(pointings)
+
+have_character_limit=input("Words have character limit? [y/N]: ")
+character_limit=None
+if(have_character_limit=="Y" or have_character_limit=="y"):
+    try:
+        character_limit=int(input("How many letters do words contain maximum? (Ex: 12): "))
+    except ValueError:
+        print("\n\tYou have to enter a number. Please, again!\n")
+        try:
+            character_limit=int(input("How many letters do words contain maximum? (Ex: 12): "))
+        except ValueError:
+            print("\n\tGoodbye!")
+            exit()
 
 #Words lists for informatin about how many words contain
 words_lists=[]
@@ -48,7 +62,7 @@ for counter in range(0,length_words):
     words_lists_with_number.append([])
 
 #Informations
-print("\n\tWords:{}\n\tPunctuation:{}\n\tNumbers:{}\n".format(length_words,length_pointings or None,length_numbers or None))
+print("\n\tWord(s):{}\n\tPunctuation(s):{}\n\tNumber(s):{}\n".format(length_words,length_pointings or None,length_numbers or None))
 
 def generate_word(words, min, max):
 
@@ -141,6 +155,7 @@ def write_words_from_list(all_words_list):
     global file_existed_checked
     global filename
     global word_counter
+    global character_limit
 
     if(file_existed_checked==0):
         filename="password_list-{}.txt".format(datetime.now().strftime('%H-%M'))
@@ -153,8 +168,13 @@ def write_words_from_list(all_words_list):
         if(type(item)==list):
             write_words_from_list(item)
         elif(type(item)==str):
-            password_list_file.write("{}\n".format(item))
-            word_counter+=1
+            if(character_limit is not None):
+                if(len(item)<=character_limit):
+                    password_list_file.write("{}\n".format(item))
+                    word_counter+=1
+            else:
+                password_list_file.write("{}\n".format(item))
+                word_counter+=1
         else:
             print("Unkown type: ",item)
 
