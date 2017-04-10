@@ -1,6 +1,8 @@
 #!/usr/bin/python
 import itertools
 from collections import Counter
+from datetime import datetime
+import os.path
 
 print("\tWELCOME to Password Generator from Keywords for Brute Force\n\n\tThis program is going to ask you the following questions,")
 print("\n\t- Keywords about victim (Split with ',')\n\t- Words contains numbers('95','2017','123')? [y/N]\n\t\t- Numbers about victim (Split with ',')")
@@ -8,21 +10,22 @@ print("\n\t- Words contains punctuation('.',',','_')? [y/N]\n\t\t- Words contain
 
 keywords=input("Keywords about victim (Split with ','): ")
 words=keywords.split(",")
+length_words=len(words)
 
 contain_number=input("Words contains numbers('95','2017','123')? [y/N]: ")
 if(contain_number == "Y" or contain_number =="y"):
     numbers_entered=input("Numbers about victim (Split with ','): ")
     numbers=numbers_entered.split(",")
+    length_numbers=len(numbers)
 
 rule_punctuation=input("Words contains punctuation('.',',','_')? [y/N]: ")
 pointings=""
 if(rule_punctuation == "Y" or rule_punctuation =="y"):
     rule_pointings=input("Words contains these punctuations (Split with blank. Ex: '. , _'): ")
     pointings=rule_pointings.split(" ")
+    length_pointings=len(pointings)
 
-length_words=len(words)
-length_numbers=len(numbers)
-length_pointings=len(pointings)
+
 
 #Words lists for informatin about how many words contain
 words_lists=[]
@@ -122,20 +125,49 @@ def generate_complex():
 generate_word(words, 1, length_words)
 generate_complex()
 
+#Program is going to create a file every running,
+#Algorithm contains reqursive function so we need this control
+file_existed_checked=0
+
+#Assign filename variable because function can get this value
+#Another way -> write_words_from_list(item,last_filename)
+filename=None
+
+#Words counter
+word_counter=0
 def write_words_from_list(all_words_list):
-    #print(all_words_list,"\n")
-    password_list_file=open("password_list.txt",mode='a',encoding='utf-8')
+    global file_existed_checked
+    global filename
+    global word_counter
+
+    if(file_existed_checked==0):
+        filename="password_list-{}.txt".format(datetime.now().strftime('%H-%M'))
+        filename=file_existed(filename)
+        file_existed_checked=1
+
+    password_list_file=open(filename,mode='a',encoding='utf-8')
 
     for item in all_words_list:
         if(type(item)==list):
             write_words_from_list(item)
         elif(type(item)==str):
             password_list_file.write("{}\n".format(item))
-            counter+=1
+            word_counter+=1
         else:
             print("Unkown type: ",item)
 
     password_list_file.close()
-    print("\t{} words were generated.\n".format(counter))
+
+def file_existed(filename_for_check,counter=0):
+    global filename
+    if(os.path.isfile(filename_for_check)):
+        new_counter=counter+1
+        new_filename="password_list-{}({}).txt".format(datetime.now().strftime('%H-%M'),new_counter)
+        return file_existed(new_filename,new_counter)
+    else:
+        #print(filename_for_check)
+        filename=filename_for_check
+        return filename
 
 write_words_from_list(all_words)
+print("\t{} words were generated. You can see these words at {}\n".format(word_counter,filename))
