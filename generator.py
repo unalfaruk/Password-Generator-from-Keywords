@@ -12,14 +12,19 @@ keywords=input("Keywords about victim (Split with ','): ")
 words=keywords.split(",")
 length_words=len(words)
 
+if(length_words<=0 or len(keywords.strip())<=0):
+    print("\n\tSorry, you have to enter at least one word. GOODBYE!\n")
+    exit()
+
 contain_number=input("Words contains numbers('95','2017','123')? [y/N]: ")
+length_numbers=0
 if(contain_number == "Y" or contain_number =="y"):
     numbers_entered=input("Numbers about victim (Split with ','): ")
     numbers=numbers_entered.split(",")
     length_numbers=len(numbers)
 
 rule_punctuation=input("Words contains punctuation('.',',','_')? [y/N]: ")
-pointings=""
+length_pointings=0
 if(rule_punctuation == "Y" or rule_punctuation =="y"):
     rule_pointings=input("Words contains these punctuations (Split with blank. Ex: '. , _'): ")
     pointings=rule_pointings.split(" ")
@@ -45,7 +50,7 @@ for counter in range(0,length_words):
     words_lists_with_number.append([])
 
 #Informations
-print("\n\tWords:{}\n\tPunctuation:{}\n\tNumbers:{}\n".format(length_words,length_pointings,length_numbers))
+print("\n\tWords:{}\n\tPunctuation:{}\n\tNumbers:{}\n".format(length_words,length_pointings or None,length_numbers or None))
 
 
 def generate_word(words, min, max):
@@ -63,8 +68,8 @@ def generate_word(words, min, max):
                     #Add all generated words to words_list for knowing how many keywords do genrated words contain
                     if not ''.join(j) in words_lists[counter_for_join_word-1]:
                         words_lists[counter_for_join_word-1].append(''.join(j))
-                        #yield ''.join(j)
-                        add_numbers(''.join(j),counter_for_join_word-1)
+                        #Check words contains numbers?
+                        add_numbers(''.join(j),counter_for_join_word-1) if length_numbers>0 else False
 
                     #add pointings to one word
                     if(length_pointings>0 and len(j)==1):
@@ -72,13 +77,13 @@ def generate_word(words, min, max):
                             #add to end
                             if not j[0]+mark in words_lists[0]:
                                 words_lists[0].append(j[0]+mark)
-                                #yield j[0]+mark
-                                add_numbers(j[0]+mark,0)
+                                #Check words contains numbers?
+                                add_numbers(j[0]+mark,0) if length_numbers>0 else False
                             #add to head
                             if not mark+j[0] in words_lists[0]:
                                 words_lists[0].append(mark+j[0])
-                                #yield mark+j[0]
-                                add_numbers(mark+j[0],0)
+                                #Check words contains numbers?
+                                add_numbers(mark+j[0],0) if length_numbers>0 else False
 
 
                     if(length_pointings>0 and len(j)>1):
@@ -86,7 +91,7 @@ def generate_word(words, min, max):
                             if not mark.join(j) in words_lists[counter_for_join_word-1]:
                                 words_lists[counter_for_join_word-1].append(mark.join(j))
                                 #yield mark.join(j)
-                                add_numbers(mark.join(j),counter_for_join_word-1)
+                                add_numbers(mark.join(j),counter_for_join_word-1) if length_numbers>0 else False
     all_words.append(words_lists)
 
 #howmanywords for same cause
