@@ -151,11 +151,15 @@ filename=None
 
 #Words counter
 word_counter=0
+
+#Prevent to duplicate words
+added_words=[]
 def write_words_from_list(all_words_list):
     global file_existed_checked
     global filename
     global word_counter
     global character_limit
+    global added_words
 
     if(file_existed_checked==0):
         filename="password_list-{}.txt".format(datetime.now().strftime('%H-%M'))
@@ -170,15 +174,20 @@ def write_words_from_list(all_words_list):
         elif(type(item)==str):
             if(character_limit is not None):
                 if(len(item)<=character_limit):
-                    password_list_file.write("{}\n".format(item))
-                    word_counter+=1
+                    if(item not in added_words):
+                        password_list_file.write("{}\n".format(item))
+                        added_words.append(item)
+                        word_counter+=1
             else:
-                password_list_file.write("{}\n".format(item))
-                word_counter+=1
+                if(item not in added_words):
+                    password_list_file.write("{}\n".format(item))
+                    added_words.append(item)
+                    word_counter+=1
         else:
             print("Unkown type: ",item)
 
     password_list_file.close()
+    #print(added_words)
 
 def file_existed(filename_for_check,counter=0):
     global filename
